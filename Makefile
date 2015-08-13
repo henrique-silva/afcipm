@@ -15,6 +15,7 @@ LD_SCRIPT = afcipm.ld
 MAP = afcipm.map
 LD_FLAGS = -T $(LD_SCRIPT) -Xlinker -Map=$(MAP)
 LD_FLAGS += -Xlinker --gc-sections
+LD_FLAGS += -mcpu=$(MCPU) -mthumb
 
 LPCOPEN_PATH = ./chip
 LPCOPEN_SRCPATH = $(LPCOPEN_PATH)/src
@@ -39,8 +40,8 @@ CFLAGS += -fno-builtin -ffunction-sections -fdata-sections -fno-strict-aliasing 
 CFLAGS += $(EXTRA_CFLAGS)
 
 #See if we can find these libraries in a standard path, not depending on LPCXpresso (libgcc.a, libc.a, libm.a, libcr_newlib_nohost.a)
-LIB_PATHS = -L$(LPCXPRESSO_PATH)/tools/lib/gcc/arm-none-eabi/4.9.3/thumb
-LIB_PATHS += -L$(LPCXPRESSO_PATH)/tools/arm-none-eabi/lib/thumb
+#LIB_PATHS = -L$(LPCXPRESSO_PATH)/tools/lib/gcc/arm-none-eabi/4.9.3/thumb
+LIB_PATHS += -L$(LPCXPRESSO_PATH)/tools/arm-none-eabi/lib/armv7-m
 
 DEPS = -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -MT"$(@:%.o=%.d)"
 
@@ -61,7 +62,7 @@ all: $(PROJ).axf $(PROJ).bin
 #Linker
 %.axf: $(ALL_OBJS) $(MAKEFILE)
 	@echo 'Invoking MCU Linker'
-	$(CC) $(LIB_PATHS) $(LIBS) $(CFLAGS) $(EXTRA_CFLAGS) $(LD_FLAGS) -o $@ $(ALL_OBJS)
+	$(CC) $(LIB_PATHS) $(LIBS) $(LD_FLAGS) -o $@ $(ALL_OBJS)
 	@echo '$< linked successfully!'
 
 #Sources Compile
@@ -82,13 +83,13 @@ boot:
 	@echo 'LPCLink booted!'
 
 program:
-	if [ ! -f $(PROJ).bin ]; then \
-	$(MAKE) $(PROJ).bin; \
+	if [ ! -f $(PROJ).axf ]; then \
+	$(MAKE) $(PROJ).axf; \
 	fi
 	$(MAKE) -i boot
 	@echo 'Programing Flash...'
 #Program flash and reset chip
-	$(LPCXPRESSO_PATH)/bin/crt_emu_cm3_nxp -wire=winusb -pLPC1764 -flash-load-exec=$(PROJ).bin
+	$(LPCXPRESSO_PATH)/bin/crt_emu_cm3_nxp -wire=winusb -pLPC1764 -flash-load-exec=$(PROJ).axf
 	@echo 'Programed Successfully!'
 
 .PHONY: all clean boot program
