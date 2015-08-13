@@ -61,6 +61,7 @@ static void IPMBTestTask( void *pvParameters );
 
 /* LED pins initialization */
 static void prvHardwareInit( void );
+void LEDTask ( void * param );
 
 /*-----------------------------------------------------------*/
 
@@ -68,6 +69,8 @@ int main(void)
 {
     /* Configure LED pins */
     prvHardwareInit();
+    xTaskCreate ( LEDTask, (const char*)"LED Task", configMINIMAL_STACK_SIZE, ( void * ) NULL, 2 , ( TaskHandle_t * ) NULL );
+
 #ifdef DEBUG_I2C
     /* Create project's tasks */
 #if ((DEBUG_I2C == 0) || (DEBUG_I2C == 3))
@@ -183,6 +186,14 @@ static void IPMBTestTask( void *pvParameters )
     }
 }
 #endif
+
+void LEDTask ( void * param )
+{
+    for ( ; ; ) {
+        vTaskDelay(100);
+        prvToggleLED(LED_BLUE);
+    }
+}
 
 void prvToggleLED( LED_id led )
 {
