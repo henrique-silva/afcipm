@@ -23,7 +23,7 @@
 #define IPMB_H_
 
 #define IPMB_I2C                I2C0
-#define IPMB_TASK_PRIORITY      3
+#define IPMB_TASK_PRIORITY      1
 #define IPMB_TXQUEUE_LEN        5
 
 #define IPMB_MAX_RETRIES        3

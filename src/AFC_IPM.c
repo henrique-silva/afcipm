@@ -33,7 +33,7 @@
 #include "ipmb.h"
 
 /* Priorities at which the tasks are created. */
-#define mainIPMBTEST_TASK_PRIORITY          ( IPMB_TASK_PRIORITY - 1 )
+#define mainIPMBTEST_TASK_PRIORITY          ( IPMB_TASK_PRIORITY )
 #define mainMASTERTEST_TASK_PRIORITY        ( tskIDLE_PRIORITY + 1 )
 #define mainSLAVETEST_TASK_PRIORITY         ( tskIDLE_PRIORITY + 1 )
 
